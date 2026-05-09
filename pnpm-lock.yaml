@@ -8,12 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@pkmn/data':
-        specifier: ^0.10.8
-        version: 0.10.8
-      '@pkmn/dex':
-        specifier: ^0.10.8
-        version: 0.10.8
       '@smogon/calc':
         specifier: ^0.11.0
         version: 0.11.0
@@ -591,18 +585,6 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
-
-  '@pkmn/data@0.10.8':
-    resolution: {integrity: sha512-PG7oe4bDanNaj2qCNQvgKpSJBvk6Ebll1dXTmRD8EHLrHwjVUijDUY24P4Ng4A7xmYOdSp6DM8Fpc64IK4y+JQ==}
-
-  '@pkmn/dex-types@0.10.8':
-    resolution: {integrity: sha512-nXw6DMz2g4Xt+vrv5xuoP2776xaSDltEks/p8B8MyuccYkbYOndxybVndYxqZpYMiNGjX7QDVVyQDZqAgSDJEw==}
-
-  '@pkmn/dex@0.10.8':
-    resolution: {integrity: sha512-irMP6snPu6x1fkpK/1elkbMVB/cjhqpnyV2vT3XUODJk9YDLgd+AkE7zi8vTavkWCTy3LXCXNMV6Ou9xLk2NyQ==}
-
-  '@pkmn/types@4.0.0':
-    resolution: {integrity: sha512-gR2s/pxJYEegek1TtsYCQupNR3d5hMlcJFsiD+2LyfKr4tc+gETTql47tWLX5mFSbPcbXh7f4+7txlMIDoZx/g==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -2596,20 +2578,6 @@ snapshots:
       fastq: 1.20.1
 
   '@nolyfill/is-core-module@1.0.39': {}
-
-  '@pkmn/data@0.10.8':
-    dependencies:
-      '@pkmn/dex-types': 0.10.8
-
-  '@pkmn/dex-types@0.10.8':
-    dependencies:
-      '@pkmn/types': 4.0.0
-
-  '@pkmn/dex@0.10.8':
-    dependencies:
-      '@pkmn/dex-types': 0.10.8
-
-  '@pkmn/types@4.0.0': {}
 
   '@rtsao/scc@1.1.0': {}
 
