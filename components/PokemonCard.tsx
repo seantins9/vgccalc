@@ -87,9 +87,23 @@ export function PokemonCard({ title, value, onChange, onEvChange, onBoostChange,
           <Combobox
             value={value.species}
             onChange={(v) => {
+              if (v === value.species) return;
               const s = species.find((x) => x.name === v);
-              const newAbility = s?.abilities[0] ?? value.ability;
-              onChange({ species: v, ability: newAbility });
+              // Reset personalisation fields when swapping to a different
+              // Pokemon; carrying over the previous Nature/EVs/IVs/etc.
+              // produces nonsense results.
+              onChange({
+                species: v,
+                ability: s?.abilities[0] ?? '',
+                item: '',
+                nature: 'Hardy',
+                teraType: s?.types[0] ?? 'Normal',
+                teraActive: false,
+                status: '',
+                evs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+                ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 },
+                boosts: { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+              });
             }}
             options={speciesNames}
             placeholder="Select Pokemon"

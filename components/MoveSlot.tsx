@@ -15,6 +15,7 @@ interface Props {
 function koColor(text: string): string {
   if (!text) return 'bg-[var(--panel-2)] text-[var(--muted)]';
   const t = text.toLowerCase();
+  if (t === 'immune') return 'bg-slate-600 text-slate-200';
   if (t.includes('guaranteed ohko')) return 'bg-red-600 text-white';
   if (t.includes('ohko')) return 'bg-red-500/80 text-white';
   if (t.includes('guaranteed 2hko')) return 'bg-orange-600 text-white';
@@ -32,9 +33,15 @@ export function MoveSlot({ index, moveName, result, onChange }: Props) {
   );
 
   const pct = result
-    ? `${result.minPct.toFixed(1)} – ${result.maxPct.toFixed(1)}%`
+    ? result.immune
+      ? '0%'
+      : `${result.minPct.toFixed(1)} – ${result.maxPct.toFixed(1)}%`
     : '—';
-  const range = result ? `${result.range[0]}–${result.range[1]}` : '—';
+  const range = result
+    ? result.immune
+      ? '0'
+      : `${result.range[0]}–${result.range[1]}`
+    : '—';
 
   return (
     <div className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-3">
@@ -78,7 +85,12 @@ export function MoveSlot({ index, moveName, result, onChange }: Props) {
       <div className="text-[11px] text-[var(--muted)] font-mono mb-2">
         Damage: {range}
       </div>
-      {result?.desc && (
+      {result?.immune && (
+        <p className="text-[11px] leading-relaxed text-[var(--muted)] border-t border-[var(--border)] pt-2 break-words">
+          No Effect — defender is immune to this move.
+        </p>
+      )}
+      {result?.desc && !result.immune && (
         <p className="text-[11px] leading-relaxed text-[var(--muted)] border-t border-[var(--border)] pt-2 break-words">
           {result.desc}
         </p>

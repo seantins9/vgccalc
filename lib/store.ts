@@ -6,9 +6,12 @@ const DEFAULT_EVS = { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 const DEFAULT_IVS = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 };
 const DEFAULT_BOOSTS = { atk: 0, def: 0, spa: 0, spd: 0, spe: 0 };
 
+// VGC 2026 Reg M-A enforces Level 50 for all Pokemon.
+export const VGC_LEVEL = 50;
+
 export const DEFAULT_ATTACKER: PokemonInput = {
   species: 'Charizard',
-  level: 100,
+  level: VGC_LEVEL,
   ability: 'Blaze',
   item: 'Choice Specs',
   nature: 'Modest',
@@ -22,7 +25,7 @@ export const DEFAULT_ATTACKER: PokemonInput = {
 
 export const DEFAULT_DEFENDER: PokemonInput = {
   species: 'Venusaur',
-  level: 100,
+  level: VGC_LEVEL,
   ability: 'Overgrow',
   item: 'Leftovers',
   nature: 'Bold',

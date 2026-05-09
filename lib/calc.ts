@@ -33,6 +33,7 @@ export interface CalcRow {
   defenderHP: number;
   minPct: number;
   maxPct: number;
+  immune?: boolean;
 }
 
 function buildPokemon(input: PokemonInput): Pokemon {
@@ -73,24 +74,93 @@ export function calcMove(
 
     const r = calculate(gens, a, d, m, f);
     const range = r.range();
-    const ko = r.kochance();
     const defenderHP = d.maxHP();
     const minPct = (range[0] / defenderHP) * 100;
     const maxPct = (range[1] / defenderHP) * 100;
+
+    // When the move is immune (damage = 0), @smogon/calc throws from
+    // kochance()/fullDesc() with "damage[damage.length - 1] === 0.".
+    // Treat that as an Immune result rather than surfacing the raw error.
+    const isImmune = range[1] === 0;
+    if (isImmune) {
+      return {
+        moveName,
+        range: [0, 0],
+        desc: '',
+        koText: 'Immune',
+        defenderHP,
+        minPct: 0,
+        maxPct: 0,
+        immune: true,
+      };
+    }
+
+    let desc = '';
+    let koText = '';
+    try {
+      desc = r.fullDesc();
+    } catch (descErr) {
+      const msg = (descErr as Error).message ?? '';
+      if (msg.includes('damage[damage.length - 1] === 0')) {
+        return {
+          moveName,
+          range: [0, 0],
+          desc: '',
+          koText: 'Immune',
+          defenderHP,
+          minPct: 0,
+          maxPct: 0,
+          immune: true,
+        };
+      }
+      desc = '';
+    }
+    try {
+      koText = r.kochance().text;
+    } catch (koErr) {
+      const msg = (koErr as Error).message ?? '';
+      if (msg.includes('damage[damage.length - 1] === 0')) {
+        return {
+          moveName,
+          range: [0, 0],
+          desc: '',
+          koText: 'Immune',
+          defenderHP,
+          minPct: 0,
+          maxPct: 0,
+          immune: true,
+        };
+      }
+      koText = '';
+    }
+
     return {
       moveName,
       range: [range[0], range[1]],
-      desc: r.fullDesc(),
-      koText: ko.text,
+      desc,
+      koText,
       defenderHP,
       minPct,
       maxPct,
     };
   } catch (err) {
+    const msg = (err as Error).message ?? '';
+    if (msg.includes('damage[damage.length - 1] === 0')) {
+      return {
+        moveName,
+        range: [0, 0],
+        desc: '',
+        koText: 'Immune',
+        defenderHP: 0,
+        minPct: 0,
+        maxPct: 0,
+        immune: true,
+      };
+    }
     return {
       moveName,
       range: [0, 0],
-      desc: `Error: ${(err as Error).message}`,
+      desc: `Error: ${msg}`,
       koText: '',
       defenderHP: 0,
       minPct: 0,
