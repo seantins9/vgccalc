@@ -1,0 +1,21 @@
+import { chromium } from 'playwright-core';
+const browser = await chromium.connectOverCDP('http://localhost:9333');
+const ctx = browser.contexts()[0];
+const page = await ctx.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push('pageerror: '+e.message));
+page.on('console', m => { if (m.type()==='error') errors.push('console: '+m.text()); });
+await page.setViewportSize({width:1440,height:900});
+const resp = await page.goto('https://vgc-calc.pages.dev/', { waitUntil: 'networkidle', timeout: 30000 });
+console.log('Status:', resp?.status());
+await page.waitForTimeout(2000);
+await page.screenshot({ path: '/Users/seantins9/Desktop/vgc-calc-prod.png', fullPage: true });
+const moveText = await page.evaluate(() => {
+  const sec = Array.from(document.querySelectorAll('section')).find(s => s.textContent?.includes('Attacker Moves'));
+  return sec?.textContent?.substring(0, 300);
+});
+console.log('Moves rendered:', moveText);
+console.log('Errors:', errors.length === 0 ? 'NONE' : errors.join('\n'));
+await page.close();
+await browser.close();
+process.exit(0);

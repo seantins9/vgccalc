@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VGC Calc
 
-## Getting Started
+Static Pokemon damage calculator (Gen 9 / Champions / VGC 2026 Reg M-A) built on
+[`@smogon/calc`](https://github.com/smogon/damage-calc).
 
-First, run the development server:
+Live: <https://vgc-calc.pages.dev>
+
+## Stack
+
+- Next.js 16 App Router (static export, `output: 'export'`)
+- TypeScript (strict)
+- Tailwind CSS v4
+- `@smogon/calc` engine
+- Zustand for client state
+- Cloudflare Pages for hosting
+
+No DB, no auth, no server actions — 100% static.
+
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000
+pnpm tsc --noEmit # type check
+pnpm lint
+pnpm build        # outputs to ./out
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deploy
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Pushing to `main` triggers `.github/workflows/deploy.yml` which deploys to
+Cloudflare Pages project `vgc-calc`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Required GitHub secrets:
 
-## Learn More
+- `CLOUDFLARE_API_TOKEN` — Pages Edit permission
+- `CLOUDFLARE_ACCOUNT_ID`
 
-To learn more about Next.js, take a look at the following resources:
+Manual deploy from a clean working tree:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm build
+pnpm dlx wrangler pages deploy out --project-name=vgc-calc --branch=main
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Layout
 
-## Deploy on Vercel
+- `app/page.tsx` — main calculator page
+- `app/layout.tsx` — metadata, JSON-LD schema
+- `app/sitemap.ts`, `app/robots.ts` — static SEO files
+- `components/Calculator.tsx` — wires attacker / defender / moves / field
+- `components/PokemonCard.tsx` — shared card for both sides
+- `components/MoveSlot.tsx`, `components/FieldPanel.tsx`
+- `components/Combobox.tsx` — searchable typeahead (1k+ species, 600+ items)
+- `lib/calc.ts` — thin facade over `@smogon/calc`
+- `lib/dex.ts` — single source of truth for dex data (species, moves, etc.)
+- `lib/store.ts` — Zustand store with sensible Gen 9 defaults
+- `lib/calc-test.ts` — engine smoke test, run via `pnpm tsx lib/calc-test.ts`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Pokemon and related properties © Nintendo / Game Freak / The Pokemon Company.
+This project is not affiliated with, endorsed by, or sponsored by any of those
+entities.
