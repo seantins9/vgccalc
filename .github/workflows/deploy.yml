@@ -5,9 +5,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: vgccalc-production-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, ARM64, vgccalc-security]
+    timeout-minutes: 60
     permissions:
       contents: read
       deployments: write
@@ -18,9 +23,9 @@ jobs:
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24.22.1
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -38,6 +43,7 @@ jobs:
         run: pnpm build
 
       - name: Deploy to Cloudflare Pages
+        if: github.ref == 'refs/heads/main'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
